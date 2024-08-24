@@ -1,6 +1,13 @@
 
 package com.harrisfauntleroy.leap;
 
+import com.harrisfauntleroy.leap.block.ModBlocks;
+import com.harrisfauntleroy.leap.item.ModItems;
+import com.harrisfauntleroy.leap.skill.CustomXPSystem;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.registries.*;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -30,10 +37,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(LEAPMod.MODID)
@@ -41,6 +44,7 @@ public class LEAPMod
 {
     public static final String MODID = "leap";
     private static final Logger LOGGER = LogUtils.getLogger();
+
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -59,6 +63,11 @@ public class LEAPMod
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
+    // TESTING
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MODID);
+    public static final AttachmentType<CustomXPSystem> CUSTOM_XP_SYSTEM = AttachmentType.builder(() -> new CustomXPSystem()).build();
+
+
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public LEAPMod(IEventBus modEventBus, ModContainer modContainer)
@@ -66,9 +75,15 @@ public class LEAPMod
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        BLOCKS.register(modEventBus);
-        ITEMS.register(modEventBus);
-        CREATIVE_MODE_TABS.register(modEventBus);
+        // Register items and creative tab
+        ModItems.register(modEventBus);
+
+        // Register blocks
+        ModBlocks.register(modEventBus);
+
+//        BLOCKS.register(modEventBus);
+//        ITEMS.register(modEventBus);
+//        CREATIVE_MODE_TABS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (LEAPMod) to respond directly to events.
@@ -80,6 +95,14 @@ public class LEAPMod
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+
+        // TESTING
+        ATTACHMENT_TYPES.register("custom_xp", () -> CUSTOM_XP_SYSTEM);
+        ATTACHMENT_TYPES.register(modEventBus);
+
+        NeoForge.EVENT_BUS.addListener(this::onPlayerJoin);
+        NeoForge.EVENT_BUS.addListener(this::onPlayerClone);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -96,8 +119,16 @@ public class LEAPMod
 
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
+        {
+            event.accept(ModItems.WAND);
+            event.accept(ModItems.RAW_WAND);
+        }
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
-            event.accept(EXAMPLE_BLOCK_ITEM);
+        {
+            event.accept(ModBlocks.WAND_BLOCK);
+            event.accept(ModBlocks.WAND_ORE);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -116,6 +147,25 @@ public class LEAPMod
         {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+    }
+
+    private void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        Player player = event.getEntity();
+        CustomXPSystem customXP = player.getData(CUSTOM_XP_SYSTEM);
+        customXP.setPlayer(player);
+
+        // Initialize with some XP for testing
+        customXP.addXP(50);
+    }
+
+    private void onPlayerClone(PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            CustomXPSystem oldCustomXP = event.getOriginal().getData(CUSTOM_XP_SYSTEM);
+            CustomXPSystem newCustomXP = event.getEntity().getData(CUSTOM_XP_SYSTEM);
+            // Copy data from old to new
+            newCustomXP.deserializeNBT(oldCustomXP.serializeNBT());
+            newCustomXP.setPlayer(event.getEntity());
         }
     }
 }
