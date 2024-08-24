@@ -1,8 +1,6 @@
 package com.harrisfauntleroy.leap.spell;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.HitResult;
@@ -12,6 +10,12 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
+
+import java.util.function.Predicate;
+import java.util.Optional;
 
 public abstract class SpellBeam implements Spell {
     protected static final double MAX_DISTANCE = 30.0;
@@ -24,9 +28,9 @@ public abstract class SpellBeam implements Spell {
         Vec3 hitPos = hitResult.getLocation();
         createParticleBeam(level, startPos, hitPos);
 
-        if (hitResult instanceof EntityHitResult entityHit) {
+        if (hitResult.getType() == HitResult.Type.ENTITY && hitResult instanceof EntityHitResult entityHit) {
             onEntityHit(level, player, entityHit);
-        } else if (hitResult instanceof BlockHitResult blockHit) {
+        } else if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHit) {
             onBlockHit(level, player, blockHit);
         }
     }
@@ -63,11 +67,40 @@ public abstract class SpellBeam implements Spell {
                 10, 0.2, 0.2, 0.2, 0.1);
     }
 
-    private static HitResult getPlayerPOVHitResult(ServerLevel level, Player player, double range) {
+    private HitResult getPlayerPOVHitResult(ServerLevel level, Player player, double range) {
         Vec3 eyePosition = player.getEyePosition();
         Vec3 viewVector = player.getViewVector(1.0F);
         Vec3 endPos = eyePosition.add(viewVector.scale(range));
+
+        // Check for entity collisions first
+        EntityHitResult entityHit = rayTraceEntities(level, player, eyePosition, endPos);
+        if (entityHit != null) {
+            return entityHit;
+        }
+
+        // If no entity was hit, check for block collisions
         ClipContext clipContext = new ClipContext(eyePosition, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player);
         return level.clip(clipContext);
+    }
+
+    private EntityHitResult rayTraceEntities(ServerLevel level, Player player, Vec3 startVec, Vec3 endVec) {
+        Entity entity = null;
+        Vec3 vec3 = null;
+        double d = 0.0D;
+        AABB aabb = new AABB(startVec, endVec).inflate(1.0D);
+        for (Entity e : level.getEntities(player, aabb, entity1 -> !entity1.isSpectator() && entity1.isPickable())) {
+            AABB entityAabb = e.getBoundingBox().inflate(0.3D);
+            Optional<Vec3> optional = entityAabb.clip(startVec, endVec);
+            if (optional.isPresent()) {
+                Vec3 vec31 = optional.get();
+                double d1 = startVec.distanceToSqr(vec31);
+                if (d1 < d || d == 0.0D) {
+                    entity = e;
+                    vec3 = vec31;
+                    d = d1;
+                }
+            }
+        }
+        return entity != null ? new EntityHitResult(entity, vec3) : null;
     }
 }
