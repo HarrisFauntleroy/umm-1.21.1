@@ -14,12 +14,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 
+import java.util.Random;
 import java.util.function.Predicate;
 import java.util.Optional;
 
 public abstract class SpellBeam implements Spell {
     protected static final double MAX_DISTANCE = 30.0;
     protected static final int PARTICLE_COUNT = 50;
+    private static final double WAVE_AMPLITUDE = 0.1; // Maximum deviation from the straight line
+    private static final double WAVE_FREQUENCY = 0.5; // How often the wave completes a full cycle
 
     @Override
     public void cast(ServerLevel level, Player player, Vec3 startPos, Vec3 endPos) {
@@ -45,13 +48,44 @@ public abstract class SpellBeam implements Spell {
                 getSound(), SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
-    private void createParticleBeam(ServerLevel level, Vec3 startPos, Vec3 endPos) {
+    private void createParticleBeamSimple(ServerLevel level, Vec3 startPos, Vec3 endPos) {
         for (int i = 0; i < PARTICLE_COUNT; i++) {
             double t = i / (double) PARTICLE_COUNT;
             Vec3 particlePos = startPos.lerp(endPos, t);
             level.sendParticles(getParticle(),
                     particlePos.x, particlePos.y, particlePos.z,
                     1, 0.1, 0.1, 0.1, 0);
+        }
+    }
+
+    private void createParticleBeam(ServerLevel level, Vec3 startPos, Vec3 endPos) {
+        Vec3 beamVector = endPos.subtract(startPos);
+        Vec3 beamDirection = beamVector.normalize();
+        double beamLength = beamVector.length();
+
+        // Create two perpendicular vectors for the wave effect
+        Vec3 perpVector1 = beamDirection.cross(new Vec3(0, 1, 0)).normalize();
+        Vec3 perpVector2 = beamDirection.cross(perpVector1).normalize();
+
+        Random random = new Random();
+
+        for (int i = 0; i < PARTICLE_COUNT; i++) {
+            double t = i / (double) PARTICLE_COUNT;
+            Vec3 basePos = startPos.add(beamVector.scale(t));
+
+            // Calculate offsets using sine waves
+            double offset1 = Math.sin(t * beamLength * WAVE_FREQUENCY * 2 * Math.PI) * WAVE_AMPLITUDE;
+            double offset2 = Math.sin(t * beamLength * WAVE_FREQUENCY * 2 * Math.PI + Math.PI / 2) * WAVE_AMPLITUDE;
+
+            // Apply random scaling to the offsets for more natural look
+            offset1 *= random.nextDouble() * 0.5 + 0.5;
+            offset2 *= random.nextDouble() * 0.5 + 0.5;
+
+            Vec3 finalPos = basePos.add(perpVector1.scale(offset1)).add(perpVector2.scale(offset2));
+
+            level.sendParticles(getParticle(),
+                    finalPos.x, finalPos.y, finalPos.z,
+                    1, 0.01, 0.01, 0.01, 0);
         }
     }
 
