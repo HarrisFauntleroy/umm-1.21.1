@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "leap:wand_block",
+    "leap:wand_ore",
+    "leap:wand_deepslate_ore"
+  ]
+}

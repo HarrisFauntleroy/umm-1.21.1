@@ -1,8 +1,11 @@
 {
   "item.leap.wand": "Wand",
   "item.leap.raw_wand": "Raw Wand",
+
   "block.leap.wand_block": "Block of Wand",
-  "block.leap.wand_ore": "Block of Wand Ore",
+  "block.leap.wand_ore": "Wand Ore",
+  "block.leap.wand_deepslate_ore": "Wand Deepslate Ore",
+
   "creativetab.leap.leap_items": "Leap Items",
   "creativetab.leap.leap_blocks": "Leap Blocks"
 }

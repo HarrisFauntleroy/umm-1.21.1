@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": {
+      "item": "leap:wand"
+    }
+  },
+  "pattern": [
+    "WWW",
+    "WWW",
+    "WWW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "leap:wand_block"
+  }
+}

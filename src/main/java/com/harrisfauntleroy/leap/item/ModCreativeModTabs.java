@@ -29,6 +29,7 @@ public class ModCreativeModTabs {
             .displayItems((itemDisplayParameters, output) -> {
                 output.accept(ModBlocks.WAND_BLOCK);
                 output.accept(ModBlocks.WAND_ORE);
+                output.accept(ModBlocks.WAND_DEEPSLATE_ORE);
     }).build());
 
     public static void register(IEventBus eventBus) {
