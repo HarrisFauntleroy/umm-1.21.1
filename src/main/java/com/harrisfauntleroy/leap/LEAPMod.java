@@ -2,6 +2,7 @@
 package com.harrisfauntleroy.leap;
 
 import com.harrisfauntleroy.leap.block.ModBlocks;
+import com.harrisfauntleroy.leap.item.ModCreativeModTabs;
 import com.harrisfauntleroy.leap.item.ModItems;
 import com.harrisfauntleroy.leap.skill.CustomXPSystem;
 import net.minecraft.world.entity.player.Player;
@@ -75,9 +76,10 @@ public class LEAPMod
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        // Register items and creative tab
+        // Register creative mode tab
+        ModCreativeModTabs.register(modEventBus);
+        // Register items
         ModItems.register(modEventBus);
-
         // Register blocks
         ModBlocks.register(modEventBus);
 
