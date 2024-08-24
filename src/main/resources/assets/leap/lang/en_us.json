@@ -2,11 +2,9 @@
   "item.leap.magic_wand": "Magic Wand",
   "item.leap.material": "Material",
   "item.leap.raw_material": "Raw Material",
-
   "block.leap.material_block": "Block of Material",
   "block.leap.material_ore": "Material Ore",
   "block.leap.material_deepslate_ore": "Material Deepslate Ore",
-
   "creativetab.leap.leap_items": "L.E.A.P Items",
   "creativetab.leap.leap_blocks": "L.E.A.P Blocks"
 }

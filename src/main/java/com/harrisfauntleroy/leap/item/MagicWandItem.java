@@ -1,6 +1,13 @@
 package com.harrisfauntleroy.leap.item;
 
-import com.harrisfauntleroy.leap.spell.*;
+import com.harrisfauntleroy.leap.spell.CraftingSpell;
+import com.harrisfauntleroy.leap.spell.ExplosiveSpell;
+import com.harrisfauntleroy.leap.spell.FireSpell;
+import com.harrisfauntleroy.leap.spell.FlightSpell;
+import com.harrisfauntleroy.leap.spell.FreezeSpell;
+import com.harrisfauntleroy.leap.spell.LevitationSpell;
+import com.harrisfauntleroy.leap.spell.MiningBeamSpell;
+import com.harrisfauntleroy.leap.spell.Spell;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;

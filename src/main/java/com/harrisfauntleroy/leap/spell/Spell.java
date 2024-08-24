@@ -6,6 +6,8 @@ import net.minecraft.world.phys.Vec3;
 
 public interface Spell {
     void cast(ServerLevel level, Player player, Vec3 startPos, Vec3 endPos);
+
     int getCooldown();
+
     String getName();
 }

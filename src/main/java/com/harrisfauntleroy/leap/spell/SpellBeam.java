@@ -1,22 +1,21 @@
 package com.harrisfauntleroy.leap.spell;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
-import java.util.Random;
-import java.util.function.Predicate;
 import java.util.Optional;
+import java.util.Random;
 
 public abstract class SpellBeam implements Spell {
     protected static final double MAX_DISTANCE = 30.0;
@@ -39,8 +38,11 @@ public abstract class SpellBeam implements Spell {
     }
 
     protected abstract void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult);
+
     protected abstract void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult);
+
     protected abstract ParticleOptions getParticle();
+
     protected abstract SoundEvent getSound();
 
     private void playSound(ServerLevel level, Player player) {

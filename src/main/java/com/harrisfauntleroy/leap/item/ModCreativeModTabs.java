@@ -18,11 +18,11 @@ public class ModCreativeModTabs {
     public static final Supplier<CreativeModeTab> LEAP_ITEMS_TAB = CREATIVE_MODE_TABS.register("leap_items_tab", () -> CreativeModeTab
             .builder()
             .icon(() -> new ItemStack(ModItems.MAGIC_WAND.get()))
-        .title(Component.translatable("creativetab.leap.leap_items")).displayItems((itemDisplayParameters, output) -> {
-        output.accept(ModItems.MAGIC_WAND);
-        output.accept(ModItems.RAW_MATERIAL);
-        output.accept(ModItems.MATERIAL);
-    }).build());
+            .title(Component.translatable("creativetab.leap.leap_items")).displayItems((itemDisplayParameters, output) -> {
+                output.accept(ModItems.MAGIC_WAND);
+                output.accept(ModItems.RAW_MATERIAL);
+                output.accept(ModItems.MATERIAL);
+            }).build());
 
     public static final Supplier<CreativeModeTab> LEAP_BLOCKS_TAB = CREATIVE_MODE_TABS.register("leap_blocks_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.MATERIAL_BLOCK.get()))
             .withTabsBefore(ResourceLocation.fromNamespaceAndPath(LEAPMod.MODID, "leap_items_tab"))
@@ -31,7 +31,7 @@ public class ModCreativeModTabs {
                 output.accept(ModBlocks.MATERIAL_BLOCK);
                 output.accept(ModBlocks.MATERIAL_ORE);
                 output.accept(ModBlocks.MATERIAL_DEEPSLATE_ORE);
-    }).build());
+            }).build());
 
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TABS.register(eventBus);
