@@ -1,4 +1,4 @@
-package com.harrisfauntleroy.LEAPMod;
+package com.harrisfauntleroy.leap;
 
 import java.util.List;
 import java.util.Set;

@@ -1,5 +1,5 @@
 
-package com.harrisfauntleroy.LEAPMod;
+package com.harrisfauntleroy.leap;
 
 import org.slf4j.Logger;
 
@@ -91,7 +91,7 @@ public class LEAPMod
 
         LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
 
-        com.harrisfauntleroy.LEAPMod.Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+        com.harrisfauntleroy.leap.Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event)
