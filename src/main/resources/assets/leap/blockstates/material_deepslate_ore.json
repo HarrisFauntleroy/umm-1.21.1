@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "leap:block/material_deepslate_ore"
+    }
+  }
+}

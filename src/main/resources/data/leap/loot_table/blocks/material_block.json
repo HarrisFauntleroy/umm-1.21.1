@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "leap:wand_block"
+          "name": "leap:material_block"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "leap:blocks/wand_block"
+  "random_sequence": "leap:blocks/material_block"
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "leap:block/wand_block"
+    "all": "leap:block/material_block"
   }
 }

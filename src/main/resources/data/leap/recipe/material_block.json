@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "W": {
-      "item": "leap:wand"
+      "item": "leap:material"
     }
   },
   "pattern": [
@@ -13,6 +13,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "leap:wand_block"
+    "id": "leap:material_block"
   }
 }

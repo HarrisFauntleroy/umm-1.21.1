@@ -3,11 +3,11 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "leap:wand_block"
+      "item": "leap:material_block"
     }
   ],
   "result": {
     "count": 9,
-    "id": "leap:wand"
+    "id": "leap:material"
   }
 }

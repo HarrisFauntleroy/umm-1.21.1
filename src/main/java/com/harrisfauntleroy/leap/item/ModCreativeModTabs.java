@@ -17,19 +17,20 @@ public class ModCreativeModTabs {
 
     public static final Supplier<CreativeModeTab> LEAP_ITEMS_TAB = CREATIVE_MODE_TABS.register("leap_items_tab", () -> CreativeModeTab
             .builder()
-            .icon(() -> new ItemStack(ModItems.WAND.get()))
+            .icon(() -> new ItemStack(ModItems.MAGIC_WAND.get()))
         .title(Component.translatable("creativetab.leap.leap_items")).displayItems((itemDisplayParameters, output) -> {
-        output.accept(ModItems.WAND);
-        output.accept(ModItems.RAW_WAND);
+        output.accept(ModItems.MAGIC_WAND);
+        output.accept(ModItems.RAW_MATERIAL);
+        output.accept(ModItems.MATERIAL);
     }).build());
 
-    public static final Supplier<CreativeModeTab> LEAP_BLOCKS_TAB = CREATIVE_MODE_TABS.register("leap_blocks_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.WAND_BLOCK.get()))
+    public static final Supplier<CreativeModeTab> LEAP_BLOCKS_TAB = CREATIVE_MODE_TABS.register("leap_blocks_tab", () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.MATERIAL_BLOCK.get()))
             .withTabsBefore(ResourceLocation.fromNamespaceAndPath(LEAPMod.MODID, "leap_items_tab"))
             .title(Component.translatable("creativetab.leap.leap_blocks"))
             .displayItems((itemDisplayParameters, output) -> {
-                output.accept(ModBlocks.WAND_BLOCK);
-                output.accept(ModBlocks.WAND_ORE);
-                output.accept(ModBlocks.WAND_DEEPSLATE_ORE);
+                output.accept(ModBlocks.MATERIAL_BLOCK);
+                output.accept(ModBlocks.MATERIAL_ORE);
+                output.accept(ModBlocks.MATERIAL_DEEPSLATE_ORE);
     }).build());
 
     public static void register(IEventBus eventBus) {

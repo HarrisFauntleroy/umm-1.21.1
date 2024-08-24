@@ -1,12 +1,12 @@
 {
-  "type": "minecraft:smelting",
+  "type": "minecraft:blasting",
   "category": "misc",
   "cookingtime": 200,
   "experience": 0.25,
   "ingredient": {
-    "item": "leap:wand_ore"
+    "item": "leap:material_ore"
   },
   "result": {
-    "id": "leap:wand"
+    "id": "leap:material"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "leap:block/wand_deepslate_ore"
+    "all": "leap:block/material_ore"
   }
 }

@@ -1,11 +1,12 @@
 {
-  "item.leap.wand": "Wand",
-  "item.leap.raw_wand": "Raw Wand",
+  "item.leap.magic_wand": "Magic Wand",
+  "item.leap.material": "Material",
+  "item.leap.raw_material": "Raw Material",
 
-  "block.leap.wand_block": "Block of Wand",
-  "block.leap.wand_ore": "Wand Ore",
-  "block.leap.wand_deepslate_ore": "Wand Deepslate Ore",
+  "block.leap.material_block": "Block of Material",
+  "block.leap.material_ore": "Material Ore",
+  "block.leap.material_deepslate_ore": "Material Deepslate Ore",
 
-  "creativetab.leap.leap_items": "Leap Items",
-  "creativetab.leap.leap_blocks": "Leap Blocks"
+  "creativetab.leap.leap_items": "L.E.A.P Items",
+  "creativetab.leap.leap_blocks": "L.E.A.P Blocks"
 }
