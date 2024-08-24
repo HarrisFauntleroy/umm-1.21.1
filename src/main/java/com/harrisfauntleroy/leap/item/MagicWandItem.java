@@ -26,10 +26,7 @@ public class MagicWandItem extends Item {
         spells.add(new FireSpell());
         spells.add(new FlightSpell());
         spells.add(new FreezeSpell());
-        spells.add(new FrenziedFlameSpell());
-        spells.add(new GrowthSpell());
         spells.add(new LevitationSpell());
-        spells.add(new MagicHoleSpell());
         spells.add(new MiningBeamSpell());
     }
 

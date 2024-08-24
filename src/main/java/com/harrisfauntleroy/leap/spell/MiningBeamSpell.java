@@ -4,22 +4,47 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class MiningBeamSpell implements Spell {
+public class MiningBeamSpell extends SpellBeam {
     private static final int BEAM_LENGTH = 10;
-    private static final int PARTICLE_COUNT = 50;
+    private static final int MINING_SPEED = 10; // Ticks between each block break (adjust for balance)
+
+    private BlockPos currentMiningPos;
+    private int miningProgress;
 
     @Override
     public void cast(ServerLevel level, Player player, Vec3 startPos, Vec3 endPos) {
-        playSound(level, player);
-        Vec3 direction = endPos.subtract(startPos).normalize();
-        Vec3 scaledEnd = startPos.add(direction.scale(BEAM_LENGTH));
-        createParticleBeam(level, startPos, scaledEnd);
-        mineBlocks(level, startPos, scaledEnd);
+        super.cast(level, player, startPos, endPos);
+        startMining(level, player);
+    }
+
+    @Override
+    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
+        // Mining beam doesn't affect entities
+    }
+
+    @Override
+    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+        currentMiningPos = hitResult.getBlockPos();
+        miningProgress = 0;
+    }
+
+    @Override
+    protected ParticleOptions getParticle() {
+        return ParticleTypes.CRIT;
+    }
+
+    @Override
+    protected SoundEvent getSound() {
+        return SoundEvents.STONE_BREAK;
     }
 
     @Override
@@ -32,31 +57,47 @@ public class MiningBeamSpell implements Spell {
         return "Mining Beam";
     }
 
-    private void playSound(ServerLevel level, Player player) {
-        level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.STONE_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
-    }
-
-    private void createParticleBeam(ServerLevel level, Vec3 startPos, Vec3 endPos) {
-        for (int i = 0; i < PARTICLE_COUNT; i++) {
-            double t = i / (double) PARTICLE_COUNT;
-            Vec3 particlePos = startPos.lerp(endPos, t);
-            level.sendParticles(ParticleTypes.CRIT,
-                    particlePos.x, particlePos.y, particlePos.z,
-                    1, 0.1, 0.1, 0.1, 0);
-        }
-    }
-
-    private void mineBlocks(ServerLevel level, Vec3 startPos, Vec3 endPos) {
-        Vec3 direction = endPos.subtract(startPos).normalize();
-        for (int i = 0; i < BEAM_LENGTH; i++) {
-            Vec3 pos = startPos.add(direction.scale(i));
-            BlockPos blockPos = new BlockPos((int) pos.x, (int) pos.y, (int) pos.z);
-            BlockState blockState = level.getBlockState(blockPos);
-
-            if (!blockState.isAir() && blockState.getDestroySpeed(level, blockPos) >= 0) {
-                level.destroyBlock(blockPos, true);
+    private void startMining(ServerLevel level, Player player) {
+        level.getServer().tell(new net.minecraft.server.TickTask(0, new Runnable() {
+            @Override
+            public void run() {
+                if (currentMiningPos != null) {
+                    mineBlock(level, player);
+                    level.getServer().tell(new net.minecraft.server.TickTask(MINING_SPEED, this));
+                }
             }
+        }));
+    }
+
+    private void mineBlock(ServerLevel level, Player player) {
+        BlockState blockState = level.getBlockState(currentMiningPos);
+        if (!blockState.isAir() && blockState.getDestroySpeed(level, currentMiningPos) >= 0) {
+            miningProgress += 20; // Simulate netherite pickaxe speed
+            level.destroyBlockProgress(player.getId(), currentMiningPos, (int) ((miningProgress / 200.0f) * 10));
+
+            if (miningProgress >= 200) { // Block fully mined
+                level.destroyBlock(currentMiningPos, true, player);
+                miningProgress = 0;
+
+                // Move to next block
+                HitResult hitResult = getPlayerPOVHitResult(level, player, BEAM_LENGTH);
+                if (hitResult.getType() == HitResult.Type.BLOCK) {
+                    currentMiningPos = ((BlockHitResult) hitResult).getBlockPos();
+                } else {
+                    currentMiningPos = null;
+                }
+            }
+        } else {
+            currentMiningPos = null;
         }
+    }
+
+    private HitResult getPlayerPOVHitResult(ServerLevel level, Player player, double range) {
+        Vec3 eyePosition = player.getEyePosition();
+        Vec3 viewVector = player.getViewVector(1.0F);
+        Vec3 endPos = eyePosition.add(viewVector.scale(range));
+        return level.clip(new net.minecraft.world.level.ClipContext(eyePosition, endPos,
+                net.minecraft.world.level.ClipContext.Block.OUTLINE,
+                net.minecraft.world.level.ClipContext.Fluid.NONE, player));
     }
 }
