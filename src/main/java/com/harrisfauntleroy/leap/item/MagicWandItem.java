@@ -84,6 +84,14 @@ public class MagicWandItem extends Item {
         return InteractionResultHolder.success(itemstack);
     }
 
+    public static List<Spell> getSpells() {
+        return spells;
+    }
+
+    public static Spell getCurrentSpell() {
+        return spells.get(currentSpellIndex);
+    }
+
     private void cycleSpell(Player player) {
         currentSpellIndex = (currentSpellIndex + 1) % spells.size();
         Spell nextSpell = getCurrentSpell();
@@ -96,9 +104,5 @@ public class MagicWandItem extends Item {
         Vec3 rightVec = lookVec.cross(new Vec3(0, 1, 0)).normalize();
         double handOffset = (hand == InteractionHand.MAIN_HAND) ? 0.4 : -0.4;
         return player.getEyePosition(1.0F).add(rightVec.scale(handOffset)).add(0, -0.3, 0);
-    }
-
-    private Spell getCurrentSpell() {
-        return spells.get(currentSpellIndex);
     }
 }
