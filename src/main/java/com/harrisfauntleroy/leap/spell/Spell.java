@@ -10,4 +10,8 @@ public interface Spell {
     int getCooldown();
 
     String getName();
+
+    boolean canCast(Player player);
+
+    float getSpellStrength(Player player);
 }

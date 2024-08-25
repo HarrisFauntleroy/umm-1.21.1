@@ -20,20 +20,27 @@ public class FireSpell extends SpellBeam {
     private static final int DAMAGE_DURATION = 60; // 3 seconds of damage effect
     private static final int DAMAGE_AMPLIFIER = 1; // Amplifier for the damage effect
     private static final int COOLDOWN_TICKS = 60; // 3 seconds
+    private static final int MIN_LEVEL = 1;
+    private static final float BASE_STRENGTH = 1.0F;
+    private static final float STRENGTH_PER_LEVEL = 0.1F;
 
     @Override
-    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
+    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {
         Entity entity = hitResult.getEntity();
 
         if (entity instanceof LivingEntity target) {
-            target.setRemainingFireTicks(FIRE_DURATION * 20); // Convert seconds to ticks
-            target.addEffect(new MobEffectInstance(MobEffects.HARM, DAMAGE_DURATION, DAMAGE_AMPLIFIER));
+            int fireDuration = (int) (FIRE_DURATION * strength);
+            int damageDuration = (int) (DAMAGE_DURATION * strength);
+            int damageAmplifier = (int) (DAMAGE_AMPLIFIER * strength);
+
+            target.setRemainingFireTicks(fireDuration * 20); // Convert seconds to ticks
+            target.addEffect(new MobEffectInstance(MobEffects.HARM, damageDuration, damageAmplifier));
             createEntityHitEffect(level, target, ParticleTypes.LAVA);
         }
     }
 
     @Override
-    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult, float strength) {
         BlockPos hitPos = hitResult.getBlockPos().relative(hitResult.getDirection());
 
         if (BaseFireBlock.canBePlacedAt(level, hitPos, hitResult.getDirection())) {
@@ -60,5 +67,15 @@ public class FireSpell extends SpellBeam {
     @Override
     public String getName() {
         return "Incendium (Fire Spell)";
+    }
+
+    @Override
+    public boolean canCast(Player player) {
+        return player.experienceLevel >= MIN_LEVEL;
+    }
+
+    @Override
+    public float getSpellStrength(Player player) {
+        return BASE_STRENGTH + (player.experienceLevel - MIN_LEVEL) * STRENGTH_PER_LEVEL;
     }
 }

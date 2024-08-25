@@ -13,16 +13,19 @@ import net.minecraft.world.phys.EntityHitResult;
 
 public class CraftingSpell extends SpellBeam {
     private static final int COOLDOWN_TICKS = 60; // 3 seconds
+    private static final int MIN_LEVEL = 5;
+    private static final float BASE_STRENGTH = 1.0F;
+    private static final float STRENGTH_PER_LEVEL = 0.1F;
 
     @Override
-    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
+    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {
         // Do nothing for entity hits
     }
 
     @Override
-    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult, float strength) {
         BlockPos hitPos = hitResult.getBlockPos().relative(hitResult.getDirection());
-        summonCraftingTable(level, hitPos);
+        summonCraftingTable(level, hitPos, strength);
         createBlockHitEffect(level, hitPos, ParticleTypes.HAPPY_VILLAGER);
     }
 
@@ -46,9 +49,33 @@ public class CraftingSpell extends SpellBeam {
         return "Fabrico (Crafting Spell)";
     }
 
-    private void summonCraftingTable(ServerLevel level, BlockPos pos) {
+    @Override
+    public boolean canCast(Player player) {
+        return player.experienceLevel >= MIN_LEVEL;
+    }
+
+    @Override
+    public float getSpellStrength(Player player) {
+        return BASE_STRENGTH + (player.experienceLevel - MIN_LEVEL) * STRENGTH_PER_LEVEL;
+    }
+
+    private void summonCraftingTable(ServerLevel level, BlockPos pos, float strength) {
         if (level.getBlockState(pos).isAir()) {
             level.setBlockAndUpdate(pos, Blocks.CRAFTING_TABLE.defaultBlockState());
+
+            // As the spell gets stronger, add additional utility blocks around the crafting table
+            if (strength >= 2.0F) {
+                BlockPos chestPos = pos.above();
+                if (level.getBlockState(chestPos).isAir()) {
+                    level.setBlockAndUpdate(chestPos, Blocks.CHEST.defaultBlockState());
+                }
+            }
+            if (strength >= 3.0F) {
+                BlockPos furnacePos = pos.north();
+                if (level.getBlockState(furnacePos).isAir()) {
+                    level.setBlockAndUpdate(furnacePos, Blocks.FURNACE.defaultBlockState());
+                }
+            }
         }
     }
 }

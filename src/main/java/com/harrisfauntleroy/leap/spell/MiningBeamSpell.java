@@ -14,9 +14,12 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class MiningBeamSpell extends SpellBeam {
-    private static final int BEAM_LENGTH = 10;
-    private static final int MINING_SPEED = 10; // Ticks between each block break (adjust for balance)
+    private static final int BASE_BEAM_LENGTH = 10;
+    private static final int BASE_MINING_SPEED = 10; // Ticks between each block break (adjust for balance)
     private static final int COOLDOWN_TICKS = 20; // 1 second cooldown
+    private static final int MIN_LEVEL = 5;
+    private static final float BASE_STRENGTH = 1.0F;
+    private static final float STRENGTH_PER_LEVEL = 0.2F;
 
     private BlockPos currentMiningPos;
     private int miningProgress;
@@ -28,12 +31,12 @@ public class MiningBeamSpell extends SpellBeam {
     }
 
     @Override
-    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
+    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {
         // Mining beam doesn't affect entities
     }
 
     @Override
-    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult, float strength) {
         currentMiningPos = hitResult.getBlockPos();
         miningProgress = 0;
     }
@@ -58,22 +61,34 @@ public class MiningBeamSpell extends SpellBeam {
         return "Effodio (Mining Spell)";
     }
 
+    @Override
+    public boolean canCast(Player player) {
+        return player.experienceLevel >= MIN_LEVEL;
+    }
+
+    @Override
+    public float getSpellStrength(Player player) {
+        return BASE_STRENGTH + (player.experienceLevel - MIN_LEVEL) * STRENGTH_PER_LEVEL;
+    }
+
     private void startMining(ServerLevel level, Player player) {
+        float strength = getSpellStrength(player);
+        int miningSpeed = (int) (BASE_MINING_SPEED / strength);
         level.getServer().tell(new net.minecraft.server.TickTask(0, new Runnable() {
             @Override
             public void run() {
                 if (currentMiningPos != null) {
-                    mineBlock(level, player);
-                    level.getServer().tell(new net.minecraft.server.TickTask(MINING_SPEED, this));
+                    mineBlock(level, player, strength);
+                    level.getServer().tell(new net.minecraft.server.TickTask(miningSpeed, this));
                 }
             }
         }));
     }
 
-    private void mineBlock(ServerLevel level, Player player) {
+    private void mineBlock(ServerLevel level, Player player, float strength) {
         BlockState blockState = level.getBlockState(currentMiningPos);
         if (!blockState.isAir() && blockState.getDestroySpeed(level, currentMiningPos) >= 0) {
-            miningProgress += 20; // Simulate netherite pickaxe speed
+            miningProgress += 20 * strength; // Simulate enhanced mining speed
             level.destroyBlockProgress(player.getId(), currentMiningPos, (int) ((miningProgress / 200.0f) * 10));
 
             if (miningProgress >= 200) { // Block fully mined
@@ -81,7 +96,8 @@ public class MiningBeamSpell extends SpellBeam {
                 miningProgress = 0;
 
                 // Move to next block
-                HitResult hitResult = getPlayerPOVHitResult(level, player, BEAM_LENGTH);
+                int beamLength = (int) (BASE_BEAM_LENGTH * strength);
+                HitResult hitResult = getPlayerPOVHitResult(level, player, beamLength);
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
                     currentMiningPos = ((BlockHitResult) hitResult).getBlockPos();
                 } else {

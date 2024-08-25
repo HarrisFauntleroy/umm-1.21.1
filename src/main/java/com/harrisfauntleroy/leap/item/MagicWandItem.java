@@ -7,6 +7,7 @@ import com.harrisfauntleroy.leap.spell.FireSpell;
 import com.harrisfauntleroy.leap.spell.FlightSpell;
 import com.harrisfauntleroy.leap.spell.FreezeSpell;
 import com.harrisfauntleroy.leap.spell.LevitationSpell;
+import com.harrisfauntleroy.leap.spell.LightningBoltSpell;
 import com.harrisfauntleroy.leap.spell.MiningBeamSpell;
 import com.harrisfauntleroy.leap.spell.Spell;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,7 @@ public class MagicWandItem extends Item {
         spells.add(new FlightSpell());
         spells.add(new FreezeSpell());
         spells.add(new LevitationSpell());
+        spells.add(new LightningBoltSpell());
         spells.add(new MiningBeamSpell());
     }
 
@@ -66,14 +68,17 @@ public class MagicWandItem extends Item {
             Spell currentSpell = getCurrentSpell();
             LOGGER.info("Current spell: " + currentSpell.getName());
 
-            currentSpell.cast(serverLevel, player, startVec, endVec);
+            if (currentSpell.canCast(player)) {
+                currentSpell.cast(serverLevel, player, startVec, endVec);
 
-            // No cooldown if player is in creative mode
-            if (!player.isCreative()) {
-                player.getCooldowns().addCooldown(this, currentSpell.getCooldown());
+                if (!player.isCreative()) {
+                    player.getCooldowns().addCooldown(this, currentSpell.getCooldown());
+                }
+
+                player.displayClientMessage(Component.literal("Cast " + currentSpell.getName() + " (Strength: " + currentSpell.getSpellStrength(player) + ")"), true);
+            } else {
+                player.displayClientMessage(Component.literal("You can't cast " + currentSpell.getName() + " yet."), true);
             }
-
-            player.displayClientMessage(Component.literal("Cast " + currentSpell.getName()), true);
         }
 
         return InteractionResultHolder.success(itemstack);

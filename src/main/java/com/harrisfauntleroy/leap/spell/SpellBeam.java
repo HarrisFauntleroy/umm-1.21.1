@@ -2,6 +2,7 @@ package com.harrisfauntleroy.leap.spell;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -25,21 +26,33 @@ public abstract class SpellBeam implements Spell {
 
     @Override
     public void cast(ServerLevel level, Player player, Vec3 startPos, Vec3 endPos) {
-        playSound(level, player);
-        HitResult hitResult = getPlayerPOVHitResult(level, player, MAX_DISTANCE);
-        Vec3 hitPos = hitResult.getLocation();
-        createParticleBeam(level, startPos, hitPos);
+        if (!canCast(player)) {
+            player.displayClientMessage(Component.literal("You can't cast this spell yet."), true);
+            return;
+        }
 
-        if (hitResult.getType() == HitResult.Type.ENTITY && hitResult instanceof EntityHitResult entityHit) {
-            onEntityHit(level, player, entityHit);
-        } else if (hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHit) {
-            onBlockHit(level, player, blockHit);
+        float strength = getSpellStrength(player);
+        playSound(level, player);
+        HitResult hitResult = getPlayerPOVHitResult(level, player, MAX_DISTANCE * strength);
+        Vec3 hitPos = hitResult.getLocation();
+        createParticleBeam(level, startPos, hitPos, strength);
+
+        if (hitResult instanceof EntityHitResult entityHit) {
+            onEntityHit(level, player, entityHit, strength);
+        } else if (hitResult instanceof BlockHitResult blockHit) {
+            onBlockHit(level, player, blockHit, strength);
         }
     }
 
-    protected abstract void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult);
+    @Override
+    public abstract boolean canCast(Player player);
 
-    protected abstract void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult);
+    @Override
+    public abstract float getSpellStrength(Player player);
+
+    protected abstract void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength);
+
+    protected abstract void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult, float strength);
 
     protected abstract ParticleOptions getParticle();
 
@@ -60,7 +73,7 @@ public abstract class SpellBeam implements Spell {
         }
     }
 
-    private void createParticleBeam(ServerLevel level, Vec3 startPos, Vec3 endPos) {
+    private void createParticleBeam(ServerLevel level, Vec3 startPos, Vec3 endPos, float strength) {
         Vec3 beamVector = endPos.subtract(startPos);
         Vec3 beamDirection = beamVector.normalize();
         double beamLength = beamVector.length();

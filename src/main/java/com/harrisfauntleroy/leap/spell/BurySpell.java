@@ -15,21 +15,24 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class BurySpell extends SpellBeam {
-    private static final int GLOWING_DURATION = 200; // 10 seconds
-    private static final int BURY_DEPTH = 3;
+    private static final int BASE_GLOWING_DURATION = 200; // 10 seconds
+    private static final int BASE_BURY_DEPTH = 3;
     private static final int COOLDOWN_TICKS = 100; // 5 seconds
+    private static final int MIN_LEVEL = 10;
+    private static final float BASE_STRENGTH = 1.0F;
+    private static final float STRENGTH_PER_LEVEL = 0.1F;
 
     @Override
-    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
+    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {
         Entity entity = hitResult.getEntity();
         if (entity instanceof LivingEntity target) {
-            buryEntity(level, target);
+            buryEntity(level, target, strength);
             createEntityHitEffect(level, target, ParticleTypes.DUST_PLUME);
         }
     }
 
     @Override
-    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult, float strength) {
         // Bury spell doesn't affect blocks directly
         createBlockHitEffect(level, hitResult.getBlockPos(), ParticleTypes.DUST_PLUME);
     }
@@ -54,13 +57,26 @@ public class BurySpell extends SpellBeam {
         return "Sepelio (Bury Spell)";
     }
 
-    private void buryEntity(ServerLevel level, LivingEntity entity) {
+    @Override
+    public boolean canCast(Player player) {
+        return player.experienceLevel >= MIN_LEVEL;
+    }
+
+    @Override
+    public float getSpellStrength(Player player) {
+        return BASE_STRENGTH + (player.experienceLevel - MIN_LEVEL) * STRENGTH_PER_LEVEL;
+    }
+
+    private void buryEntity(ServerLevel level, LivingEntity entity, float strength) {
         BlockPos entityPos = entity.blockPosition();
 
+        int glowingDuration = (int) (BASE_GLOWING_DURATION * strength);
+        int buryDepth = (int) (BASE_BURY_DEPTH * strength);
+
         // Make the entity glow
-        entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0));
+        entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, glowingDuration, 0));
 
         // Move the entity down
-        entity.teleportTo(entityPos.getX(), entityPos.getY() - BURY_DEPTH, entityPos.getZ());
+        entity.teleportTo(entityPos.getX(), entityPos.getY() - buryDepth, entityPos.getZ());
     }
 }

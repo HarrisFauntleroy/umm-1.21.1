@@ -15,21 +15,24 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class FreezeSpell extends SpellBeam {
-    private static final int FREEZE_DURATION = 100; // 5 seconds
-    private static final int FREEZE_RADIUS = 5;
+    private static final int BASE_FREEZE_DURATION = 100; // 5 seconds
+    private static final int BASE_FREEZE_RADIUS = 5;
     private static final int COOLDOWN_TICKS = 200; // 10 seconds
+    private static final int MIN_LEVEL = 8;
+    private static final float BASE_STRENGTH = 1.0F;
+    private static final float STRENGTH_PER_LEVEL = 0.15F;
 
     @Override
-    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
+    protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {
         if (hitResult.getEntity() instanceof LivingEntity target) {
-            freezeEntity(level, target);
+            freezeEntity(level, target, strength);
         }
     }
 
     @Override
-    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+    protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult, float strength) {
         BlockPos hitPos = hitResult.getBlockPos();
-        freezeArea(level, hitPos);
+        freezeArea(level, hitPos, strength);
     }
 
     @Override
@@ -52,9 +55,20 @@ public class FreezeSpell extends SpellBeam {
         return "Glacies (Freeze Spell)";
     }
 
-    private void freezeEntity(ServerLevel level, LivingEntity entity) {
-        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, FREEZE_DURATION, 4));
-        entity.addEffect(new MobEffectInstance(MobEffects.JUMP, FREEZE_DURATION, 128));
+    @Override
+    public boolean canCast(Player player) {
+        return player.experienceLevel >= MIN_LEVEL;
+    }
+
+    @Override
+    public float getSpellStrength(Player player) {
+        return BASE_STRENGTH + (player.experienceLevel - MIN_LEVEL) * STRENGTH_PER_LEVEL;
+    }
+
+    private void freezeEntity(ServerLevel level, LivingEntity entity, float strength) {
+        int freezeDuration = (int) (BASE_FREEZE_DURATION * strength);
+        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, freezeDuration, 4));
+        entity.addEffect(new MobEffectInstance(MobEffects.JUMP, freezeDuration, 128));
 
         BlockPos entityPos = entity.blockPosition();
         level.setBlockAndUpdate(entityPos, Blocks.ICE.defaultBlockState());
@@ -63,11 +77,12 @@ public class FreezeSpell extends SpellBeam {
         createEntityHitEffect(level, entity, ParticleTypes.SNOWFLAKE);
     }
 
-    private void freezeArea(ServerLevel level, BlockPos center) {
-        for (int x = -FREEZE_RADIUS; x <= FREEZE_RADIUS; x++) {
-            for (int y = -FREEZE_RADIUS; y <= FREEZE_RADIUS; y++) {
-                for (int z = -FREEZE_RADIUS; z <= FREEZE_RADIUS; z++) {
-                    if (x * x + y * y + z * z <= FREEZE_RADIUS * FREEZE_RADIUS) {
+    private void freezeArea(ServerLevel level, BlockPos center, float strength) {
+        int freezeRadius = (int) (BASE_FREEZE_RADIUS * strength);
+        for (int x = -freezeRadius; x <= freezeRadius; x++) {
+            for (int y = -freezeRadius; y <= freezeRadius; y++) {
+                for (int z = -freezeRadius; z <= freezeRadius; z++) {
+                    if (x * x + y * y + z * z <= freezeRadius * freezeRadius) {
                         BlockPos pos = center.offset(x, y, z);
                         if (level.getBlockState(pos).liquid()) {
                             level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
