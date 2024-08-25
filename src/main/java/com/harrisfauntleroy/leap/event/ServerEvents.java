@@ -16,7 +16,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        LOGGER.info("onPlayerJoin");
+        LOGGER.info("Player joined...");
     }
 
     @SubscribeEvent
