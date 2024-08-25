@@ -1,9 +1,14 @@
 name: Build and Release
+
 on:
   push:
     branches:
       - main
       - '1.*'  # This will trigger on branches like 1.20, 1.21, etc.
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
