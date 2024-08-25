@@ -1,4 +1,4 @@
-package com.harrisfauntleroy.leap;
+package com.harrisfauntleroy.leap.event;
 
 import com.mojang.logging.LogUtils;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;

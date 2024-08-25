@@ -1,11 +1,11 @@
-package com.harrisfauntleroy.leap;
+package com.harrisfauntleroy.leap.event;
 
+import com.harrisfauntleroy.leap.LEAPMod;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import org.slf4j.Logger;
 
