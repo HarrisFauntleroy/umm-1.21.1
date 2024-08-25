@@ -1,19 +1,24 @@
 .PHONY: dev
 dev:
 	@echo "Starting Minecraft client and server..."
-	./gradlew runClient runServer
+	gradlew runClient runServer
 
 .PHONY: client
 client:
 	@echo "Starting Minecraft client..."
-	./gradlew runClient
+	gradlew runClient
 
 .PHONY: server
 server:
 	@echo "Starting Minecraft server..."
-	./gradlew runServer
+	gradlew runServer
 
 .PHONY: build
 build:
-	@echo "Building Mod jar..."
-	./gradlew build
+	@echo "Building the mod..."
+	gradlew build
+
+.PHONY: clean
+clean:
+	@echo "Cleaning up..."
+	gradlew clean
