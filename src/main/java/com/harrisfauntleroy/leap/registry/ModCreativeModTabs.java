@@ -1,7 +1,8 @@
-package com.harrisfauntleroy.leap.item;
+package com.harrisfauntleroy.leap.registry;
 
 import com.harrisfauntleroy.leap.LEAPMod;
 import com.harrisfauntleroy.leap.block.ModBlocks;
+import com.harrisfauntleroy.leap.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
