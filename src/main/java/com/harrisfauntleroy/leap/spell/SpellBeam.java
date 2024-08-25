@@ -18,9 +18,9 @@ import java.util.Optional;
 import java.util.Random;
 
 public abstract class SpellBeam implements Spell {
-    protected static final double MAX_DISTANCE = 30.0;
-    protected static final int PARTICLE_COUNT = 50;
-    private static final double WAVE_AMPLITUDE = 0.4; // Maximum deviation from the straight line
+    protected static final double MAX_DISTANCE = 32.0;
+    protected static final int PARTICLE_COUNT = 32;
+    private static final double WAVE_AMPLITUDE = 0.2; // Maximum deviation from the straight line
     private static final double WAVE_FREQUENCY = 0.5; // How often the wave completes a full cycle
 
     @Override

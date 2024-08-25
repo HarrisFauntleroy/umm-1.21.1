@@ -1,5 +1,6 @@
 package com.harrisfauntleroy.leap.spell;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -13,6 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ExplosiveSpell extends SpellBeam {
     private static final float EXPLOSION_POWER = 4.0F;
+    private static final int COOLDOWN_TICKS = 200; // 10 seconds
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
@@ -21,7 +23,10 @@ public class ExplosiveSpell extends SpellBeam {
 
     @Override
     protected void onBlockHit(ServerLevel level, Player player, BlockHitResult hitResult) {
+        BlockPos hitPos = hitResult.getBlockPos().relative(hitResult.getDirection());
+
         createExplosion(level, hitResult.getLocation());
+        createBlockHitEffect(level, hitPos, ParticleTypes.LAVA);
     }
 
     @Override
@@ -36,12 +41,12 @@ public class ExplosiveSpell extends SpellBeam {
 
     @Override
     public int getCooldown() {
-        return 200; // 10 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Explosive Orb";
+        return "Deflagratio";
     }
 
     private void createExplosion(ServerLevel level, Vec3 pos) {

@@ -1,5 +1,6 @@
 package com.harrisfauntleroy.leap.item;
 
+import com.harrisfauntleroy.leap.spell.BurySpell;
 import com.harrisfauntleroy.leap.spell.CraftingSpell;
 import com.harrisfauntleroy.leap.spell.ExplosiveSpell;
 import com.harrisfauntleroy.leap.spell.FireSpell;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class MagicWandItem extends Item {
     private static int currentSpellIndex = 0;
 
     static {
+        spells.add(new BurySpell());
         spells.add(new CraftingSpell());
         spells.add(new ExplosiveSpell());
         spells.add(new FireSpell());
@@ -42,7 +45,7 @@ public class MagicWandItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
 
         LOGGER.info("MagicWandItem used by player: " + player.getName().getString());
@@ -65,6 +68,7 @@ public class MagicWandItem extends Item {
 
             currentSpell.cast(serverLevel, player, startVec, endVec);
 
+            // No cooldown if player is in creative mode
             if (!player.isCreative()) {
                 player.getCooldowns().addCooldown(this, currentSpell.getCooldown());
             }

@@ -17,6 +17,7 @@ public class LevitationSpell extends SpellBeam {
     private static final int LEVITATION_AMPLIFIER = 2;
     private static final int SLOW_FALLING_DURATION = 100; // 5 seconds
     private static final int GLOWING_DURATION = 200; // 10 seconds
+    private static final int COOLDOWN_TICKS = 100; // 5 seconds
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
@@ -44,12 +45,12 @@ public class LevitationSpell extends SpellBeam {
 
     @Override
     public int getCooldown() {
-        return 100; // 5 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Levitation";
+        return "Levitatio";
     }
 
     private void applyLevitationEffect(LivingEntity target) {

@@ -12,6 +12,7 @@ import net.minecraft.world.phys.Vec3;
 public class FlightSpell implements Spell {
     private static final int FLIGHT_DURATION = 600; // 30 seconds
     private static final int PARTICLE_COUNT = 50;
+    private static final int COOLDOWN_TICKS = 1200; // 60 seconds
 
     @Override
     public void cast(ServerLevel level, Player player, Vec3 startPos, Vec3 endPos) {
@@ -22,12 +23,12 @@ public class FlightSpell implements Spell {
 
     @Override
     public int getCooldown() {
-        return 1200; // 60 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Ethereal Wings";
+        return "Volatus";
     }
 
     private void playSound(ServerLevel level, Player player) {

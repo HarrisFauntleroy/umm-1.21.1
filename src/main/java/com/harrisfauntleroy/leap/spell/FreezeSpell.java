@@ -17,6 +17,7 @@ import net.minecraft.world.phys.EntityHitResult;
 public class FreezeSpell extends SpellBeam {
     private static final int FREEZE_DURATION = 100; // 5 seconds
     private static final int FREEZE_RADIUS = 5;
+    private static final int COOLDOWN_TICKS = 200; // 10 seconds
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
@@ -43,12 +44,12 @@ public class FreezeSpell extends SpellBeam {
 
     @Override
     public int getCooldown() {
-        return 200; // 10 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Arctic Blast";
+        return "Glacies";
     }
 
     private void freezeEntity(ServerLevel level, LivingEntity entity) {

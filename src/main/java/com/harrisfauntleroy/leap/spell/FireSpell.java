@@ -19,16 +19,15 @@ public class FireSpell extends SpellBeam {
     private static final int FIRE_DURATION = 5; // 5 seconds
     private static final int DAMAGE_DURATION = 60; // 3 seconds of damage effect
     private static final int DAMAGE_AMPLIFIER = 1; // Amplifier for the damage effect
+    private static final int COOLDOWN_TICKS = 60; // 3 seconds
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
         Entity entity = hitResult.getEntity();
+
         if (entity instanceof LivingEntity target) {
-            // Set the entity on fire
             target.setRemainingFireTicks(FIRE_DURATION * 20); // Convert seconds to ticks
-            // Apply damage over time effect
             target.addEffect(new MobEffectInstance(MobEffects.HARM, DAMAGE_DURATION, DAMAGE_AMPLIFIER));
-            // Create hit effect
             createEntityHitEffect(level, target, ParticleTypes.LAVA);
         }
     }
@@ -38,9 +37,7 @@ public class FireSpell extends SpellBeam {
         BlockPos hitPos = hitResult.getBlockPos().relative(hitResult.getDirection());
 
         if (BaseFireBlock.canBePlacedAt(level, hitPos, hitResult.getDirection())) {
-            // Set the block on fire
             level.setBlockAndUpdate(hitPos, BaseFireBlock.getState(level, hitPos));
-            // Create hit effect
             createBlockHitEffect(level, hitPos, ParticleTypes.LAVA);
         }
     }
@@ -57,11 +54,11 @@ public class FireSpell extends SpellBeam {
 
     @Override
     public int getCooldown() {
-        return 60; // 3 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Fire";
+        return "Incendium";
     }
 }

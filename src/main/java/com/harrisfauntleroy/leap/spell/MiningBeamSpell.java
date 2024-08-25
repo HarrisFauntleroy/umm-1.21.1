@@ -54,7 +54,7 @@ public class MiningBeamSpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Mining Beam";
+        return "Effodio";
     }
 
     private void startMining(ServerLevel level, Player player) {

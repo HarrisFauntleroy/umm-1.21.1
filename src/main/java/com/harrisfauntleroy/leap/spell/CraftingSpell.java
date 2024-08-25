@@ -12,6 +12,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class CraftingSpell extends SpellBeam {
+    private static final int COOLDOWN_TICKS = 60; // 3 seconds
+
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult) {
         // Do nothing for entity hits
@@ -36,12 +38,12 @@ public class CraftingSpell extends SpellBeam {
 
     @Override
     public int getCooldown() {
-        return 60; // 3 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Summon Crafting Table";
+        return "Fabrico";
     }
 
     private void summonCraftingTable(ServerLevel level, BlockPos pos) {
