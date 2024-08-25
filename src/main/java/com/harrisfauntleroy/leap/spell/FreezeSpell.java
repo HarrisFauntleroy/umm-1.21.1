@@ -15,12 +15,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class FreezeSpell extends SpellBeam {
+    private static final int COOLDOWN_TICKS = 20; // 1 second
+    private static final int MIN_LEVEL = 4;
+    private static final float BASE_STRENGTH = 0.2F;
+    private static final float STRENGTH_PER_LEVEL = 0.2F;
+
     private static final int BASE_FREEZE_DURATION = 100; // 5 seconds
     private static final int BASE_FREEZE_RADIUS = 5;
-    private static final int COOLDOWN_TICKS = 200; // 10 seconds
-    private static final int MIN_LEVEL = 8;
-    private static final float BASE_STRENGTH = 1.0F;
-    private static final float STRENGTH_PER_LEVEL = 0.15F;
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {

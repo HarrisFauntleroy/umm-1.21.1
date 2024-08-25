@@ -16,13 +16,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class FireSpell extends SpellBeam {
+    private static final int COOLDOWN_TICKS = 20; // 1 second
+    private static final int MIN_LEVEL = 4;
+    private static final float BASE_STRENGTH = 0.2F;
+    private static final float STRENGTH_PER_LEVEL = 0.2F;
+
     private static final int FIRE_DURATION = 5; // 5 seconds
     private static final int DAMAGE_DURATION = 60; // 3 seconds of damage effect
     private static final int DAMAGE_AMPLIFIER = 1; // Amplifier for the damage effect
-    private static final int COOLDOWN_TICKS = 60; // 3 seconds
-    private static final int MIN_LEVEL = 1;
-    private static final float BASE_STRENGTH = 1.0F;
-    private static final float STRENGTH_PER_LEVEL = 0.1F;
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {

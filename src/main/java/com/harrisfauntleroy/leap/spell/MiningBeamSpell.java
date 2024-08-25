@@ -14,12 +14,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class MiningBeamSpell extends SpellBeam {
+    private static final int COOLDOWN_TICKS = 20; // 1 second
+    private static final int MIN_LEVEL = 4;
+    private static final float BASE_STRENGTH = 0.2F;
+    private static final float STRENGTH_PER_LEVEL = 0.2F;
+
     private static final int BASE_BEAM_LENGTH = 10;
     private static final int BASE_MINING_SPEED = 10; // Ticks between each block break (adjust for balance)
-    private static final int COOLDOWN_TICKS = 20; // 1 second cooldown
-    private static final int MIN_LEVEL = 5;
-    private static final float BASE_STRENGTH = 1.0F;
-    private static final float STRENGTH_PER_LEVEL = 0.2F;
 
     private BlockPos currentMiningPos;
     private int miningProgress;

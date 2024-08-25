@@ -13,10 +13,10 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class LightningBoltSpell extends SpellBeam {
-    private static final int COOLDOWN_TICKS = 200; // 10 seconds
-    private static final int MIN_LEVEL = 15;
-    private static final float BASE_STRENGTH = 1.0F;
-    private static final float STRENGTH_PER_LEVEL = 0.1F;
+    private static final int COOLDOWN_TICKS = 20; // 1 second
+    private static final int MIN_LEVEL = 4;
+    private static final float BASE_STRENGTH = 0.2F;
+    private static final float STRENGTH_PER_LEVEL = 0.2F;
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {

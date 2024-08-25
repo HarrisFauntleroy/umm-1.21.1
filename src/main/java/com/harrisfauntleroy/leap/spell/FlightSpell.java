@@ -11,10 +11,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 public class FlightSpell extends AbstractSpell {
+    private static final int COOLDOWN_TICKS = 20; // 1 second
+    private static final int MIN_LEVEL = 4;
+
     private static final int BASE_DURATION = 600; // 30 seconds
     private static final int PARTICLE_COUNT = 50;
-    private static final int MIN_LEVEL = 10;
-    private static final int COOLDOWN_TICKS = 1200; // 60 seconds
 
     private static final int TIER_2_LEVEL = 20; // Level for elytra-like flight
     private static final int TIER_3_LEVEL = 30; // Level for launch ability

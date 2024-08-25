@@ -13,14 +13,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class LevitationSpell extends SpellBeam {
+    private static final int COOLDOWN_TICKS = 20; // 1 second
+    private static final int MIN_LEVEL = 4;
+    private static final float BASE_STRENGTH = 0.2F;
+    private static final float STRENGTH_PER_LEVEL = 0.2F;
+
     private static final int BASE_LEVITATION_DURATION = 100; // 5 seconds
     private static final int BASE_LEVITATION_AMPLIFIER = 2;
     private static final int BASE_SLOW_FALLING_DURATION = 100; // 5 seconds
     private static final int BASE_GLOWING_DURATION = 200; // 10 seconds
-    private static final int COOLDOWN_TICKS = 100; // 5 seconds
-    private static final int MIN_LEVEL = 12;
-    private static final float BASE_STRENGTH = 1.0F;
-    private static final float STRENGTH_PER_LEVEL = 0.1F;
 
     @Override
     protected void onEntityHit(ServerLevel level, Player player, EntityHitResult hitResult, float strength) {
