@@ -49,7 +49,7 @@ public class FreezeSpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Glacies";
+        return "Glacies (Freeze Spell)";
     }
 
     private void freezeEntity(ServerLevel level, LivingEntity entity) {

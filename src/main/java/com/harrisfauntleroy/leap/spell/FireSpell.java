@@ -59,6 +59,6 @@ public class FireSpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Incendium";
+        return "Incendium (Fire Spell)";
     }
 }

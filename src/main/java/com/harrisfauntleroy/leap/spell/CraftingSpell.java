@@ -43,7 +43,7 @@ public class CraftingSpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Fabrico";
+        return "Fabrico (Crafting Spell)";
     }
 
     private void summonCraftingTable(ServerLevel level, BlockPos pos) {

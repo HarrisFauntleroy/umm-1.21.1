@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 public class MiningBeamSpell extends SpellBeam {
     private static final int BEAM_LENGTH = 10;
     private static final int MINING_SPEED = 10; // Ticks between each block break (adjust for balance)
+    private static final int COOLDOWN_TICKS = 20; // 1 second cooldown
 
     private BlockPos currentMiningPos;
     private int miningProgress;
@@ -49,12 +50,12 @@ public class MiningBeamSpell extends SpellBeam {
 
     @Override
     public int getCooldown() {
-        return 20; // 1 second cooldown
+        return COOLDOWN_TICKS;
     }
 
     @Override
     public String getName() {
-        return "Effodio";
+        return "Effodio (Mining Spell)";
     }
 
     private void startMining(ServerLevel level, Player player) {

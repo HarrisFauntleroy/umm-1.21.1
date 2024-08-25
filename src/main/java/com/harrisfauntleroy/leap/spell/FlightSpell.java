@@ -28,7 +28,7 @@ public class FlightSpell implements Spell {
 
     @Override
     public String getName() {
-        return "Volatus";
+        return "Volatus (Flight Spell)";
     }
 
     private void playSound(ServerLevel level, Player player) {

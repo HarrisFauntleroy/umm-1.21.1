@@ -11,13 +11,12 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 public class BurySpell extends SpellBeam {
     private static final int GLOWING_DURATION = 200; // 10 seconds
-    private static final int BURY_DEPTH = 2;
+    private static final int BURY_DEPTH = 3;
     private static final int COOLDOWN_TICKS = 100; // 5 seconds
 
     @Override
@@ -52,7 +51,7 @@ public class BurySpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Effodio";
+        return "Sepelio (Bury Spell)";
     }
 
     private void buryEntity(ServerLevel level, LivingEntity entity) {
@@ -61,19 +60,7 @@ public class BurySpell extends SpellBeam {
         // Make the entity glow
         entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOWING_DURATION, 0));
 
-        // Bury the entity
-        for (int y = 0; y > -BURY_DEPTH; y--) {
-            BlockPos pos = entityPos.above(y);
-            if (level.getBlockState(pos).isAir() || level.getBlockState(pos).liquid()) {
-                level.setBlockAndUpdate(pos, Blocks.DIRT.defaultBlockState());
-            }
-        }
-
         // Move the entity down
         entity.teleportTo(entityPos.getX(), entityPos.getY() - BURY_DEPTH, entityPos.getZ());
-
-        // Ensure there's air for the entity to breathe
-        level.setBlockAndUpdate(entityPos.above(-BURY_DEPTH), Blocks.AIR.defaultBlockState());
-        level.setBlockAndUpdate(entityPos.above(-BURY_DEPTH + 1), Blocks.AIR.defaultBlockState());
     }
 }

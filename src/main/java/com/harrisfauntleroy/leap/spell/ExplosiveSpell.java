@@ -46,7 +46,7 @@ public class ExplosiveSpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Deflagratio";
+        return "Deflagratio (Explosive Spell)";
     }
 
     private void createExplosion(ServerLevel level, Vec3 pos) {

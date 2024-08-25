@@ -50,7 +50,7 @@ public class LevitationSpell extends SpellBeam {
 
     @Override
     public String getName() {
-        return "Levitatio";
+        return "Levitatio (Levitation Spell)";
     }
 
     private void applyLevitationEffect(LivingEntity target) {
