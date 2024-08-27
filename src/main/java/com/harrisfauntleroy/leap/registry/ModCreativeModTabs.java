@@ -32,6 +32,7 @@ public class ModCreativeModTabs {
                 output.accept(ModBlocks.MATERIAL_BLOCK);
                 output.accept(ModBlocks.MATERIAL_ORE);
                 output.accept(ModBlocks.MATERIAL_DEEPSLATE_ORE);
+                output.accept(ModBlocks.CULLING_BLOCK);
             }).build());
 
     public static void register(IEventBus eventBus) {
