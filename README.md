@@ -87,3 +87,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ## License
 
 This project is licensed under MIT. See the [LICENSE](LICENSE) file for details.
+
+---
+
+![Visualization of this repo](./diagram.svg)
